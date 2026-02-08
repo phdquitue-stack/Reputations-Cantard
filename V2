@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jauges horizontales 0–100</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#111a2e;
+      --text:#e8eefc;
+      --muted:#9fb0d0;
+      --track:#223256;
+      --tick:#38507f;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 600px at 20% 0%, #14224a 0%, var(--bg) 60%);
+      color:var(--text);
+      padding:32px;
+    }
+    h1{margin:0 0 10px;font-size:22px}
+    p{margin:0 0 18px;color:var(--muted);max-width:80ch}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap:16px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      padding:16px;
+      box-shadow: var(--shadow);
+    }
+    .row{display:flex;flex-direction:column;gap:10px}
+
+    .legend .title{font-weight:800;font-size:14px}
+    .legend .subtitle{color:var(--muted);font-size:12px;margin-top:4px}
+
+    /* Gauge */
+    .gauge{
+      position:relative;
+      width:100%;
+      height:64px;
+      padding-top:16px; /* place pour ticks */
+    }
+
+    .track{
+      position:absolute;
+      left:0; right:0;
+      top:28px;
+      height:12px;
+      background:var(--track);
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(255,255,255,.2), rgba(255,255,255,0));
+      position:relative;
+    }
+
+    /* Color classes set by JS */
+    .c-red{ background-color:#ff4d6d; }
+    .c-orange{ background-color:#ffb020; }
+    .c-green{ background-color:#28d17c; }
+    .fill::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(90deg, rgba(255,255,255,.25), rgba(255,255,255,0));
+      opacity:.9;
+    }
+
+    /* Indicator bubble */
+    .bubble{
+      position:absolute;
+      top:0px;
+      transform: translateX(-50%);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(6px);
+      white-space:nowrap;
+    }
+
+    /* ticks */
+    .ticks{
+      position:absolute;
+      left:0; right:0;
+      top:10px;
+      height:18px;
+      pointer-events:none;
+    }
+    .tick{
+      position:absolute;
+      top:0;
+      width:2px;
+      height:10px;
+      background: var(--tick);
+      opacity:.9;
+      transform: translateX(-50%);
+    }
+    .tick.major{
+      height:14px;
+      opacity:1;
+    }
+    .tick-label{
+      position:absolute;
+      top:12px;
+      transform: translateX(-50%);
+      font-size:10px;
+      color:var(--muted);
+    }
+
+    /* Controls (optional) */
+    .controls{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    input[type="range"]{width:100%}
+
+    .hint{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    @media (max-width:420px){
+      body{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <h1>Jauges horizontales (0 → 100)</h1>
+  <p>
+    Les valeurs peuvent être réglées via l’URL (ex: <code>?a=70&b=30&c=95</code>).
+    Optionnel : afficher des sliders avec <code>?edit=1</code>.
+  </p>
+
+  <div class="grid" id="grid">
+    <!-- A -->
+    <div class="card">
+      <div class="row">
+        <div class="gauge" data-key="a" data-title="Énergie" data-subtitle="Aujourd’hui"></div>
+        <div class="legend">
+          <div class="title">Énergie</div>
+          <div class="subtitle">Aujourd’hui</div>
+        </div>
+        <div class="controls" data-controls-for="a" hidden>
+          <input type="range" min="0" max="100" step="1" />
+          <span class="smallval" style="color:var(--muted);font-size:12px;min-width:34px;text-align:right;">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="card">
+      <div class="row">
+        <div class="gauge" data-key="b" data-title="Qualité" data-subtitle="Contrôle interne"></div>
+        <div class="legend">
+          <div class="title">Qualité</div>
+          <div class="subtitle">Contrôle interne</div>
+        </div>
+        <div class="controls" data-controls-for="b" hidden>
+          <input type="range" min="0" max="100" step="1" />
+          <span class="smallval" style="color:var(--muted);font-size:12px;min-width:34px;text-align:right;">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="card">
+      <div class="row">
+        <div class="gauge" data-key="c" data-title="Satisfaction" data-subtitle="Enquête"></div>
+        <div class="legend">
+          <div class="title">Satisfaction</div>
+          <div class="subtitle">Enquête</div>
+        </div>
+        <div class="controls" data-controls-for="c" hidden>
+          <input type="range" min="0" max="100" step="1" />
+          <span class="smallval" style="color:var(--muted);font-size:12px;min-width:34px;text-align:right;">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint">
+    Partage à tes amis un lien du style : <code>https://ton-site/index.html?a=72&b=40&c=90</code><br/>
+    Pour afficher les sliders : ajoute <code>&edit=1</code>.
+  </div>
+
+  <script>
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+    function colorClassForValue(v){
+      if (v < 40) return "c-red";
+      if (v < 70) return "c-orange";
+      return "c-green";
+    }
+
+    function parseQuery(){
+      const params = new URLSearchParams(location.search);
+      const obj = {};
+      for (const [k,v] of params.entries()) obj[k] = v;
+      return obj;
+    }
+
+    function buildTicks(container){
+      const ticks = document.createElement("div");
+      ticks.className = "ticks";
+
+      // ticks every 5 -> 0..100 (21)
+      for(let i=0;i<=20;i++){
+        const value = i*5;
+        const left = value; // %
+        const isMajor = (value % 25 === 0); // 0,25,50,75,100
+
+        const t = document.createElement("div");
+        t.className = "tick" + (isMajor ? " major" : "");
+        t.style.left = left + "%";
+        ticks.appendChild(t);
+
+        // labels 0/50/100
+        if (value === 0 || value === 50 || value === 100){
+          const lab = document.createElement("div");
+          lab.className = "tick-label";
+          lab.style.left = left + "%";
+          lab.textContent = String(value);
+          ticks.appendChild(lab);
+        }
+      }
+      container.appendChild(ticks);
+    }
+
+    function renderGauge(gaugeEl, value){
+      value = clamp(Math.round(value), 0, 100);
+
+      gaugeEl.innerHTML = "";
+      buildTicks(gaugeEl);
+
+      const track = document.createElement("div");
+      track.className = "track";
+
+      const fill = document.createElement("div");
+      fill.className = "fill " + colorClassForValue(value);
+      fill.style.width = value + "%";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.style.left = value + "%";
+      bubble.textContent = value + " / 100";
+
+      track.appendChild(fill);
+      gaugeEl.appendChild(bubble);
+      gaugeEl.appendChild(track);
+
+      // a11y
+      const title = gaugeEl.dataset.title || "Jauge";
+      gaugeEl.setAttribute("role","img");
+      gaugeEl.setAttribute("aria-label", `${title} : ${value} sur 100`);
+    }
+
+    // --- Init ---
+    const q = parseQuery();
+    const editMode = q.edit === "1";
+
+    // Valeurs par défaut (si pas dans l'URL)
+    const defaults = { a: 70, b: 40, c: 90 };
+
+    // Render all
+    const gauges = document.querySelectorAll(".gauge");
+    gauges.forEach(g => {
+      const key = g.dataset.key;
+      const v = (key in q) ? Number(q[key]) : defaults[key] ?? 0;
+      renderGauge(g, isFinite(v) ? v : 0);
+    });
+
+    // Sliders optionnels
+    document.querySelectorAll(".controls").forEach(ctrl => {
+      const key = ctrl.dataset.controlsFor;
+      const range = ctrl.querySelector('input[type="range"]');
+      const out = ctrl.querySelector(".smallval");
+      const gaugeEl = document.querySelector(`.gauge[data-key="${key}"]`);
+
+      const initial = (key in q) ? Number(q[key]) : defaults[key] ?? 0;
+      range.value = clamp(isFinite(initial) ? initial : 0, 0, 100);
+      out.textContent = range.value;
+
+      if (editMode) ctrl.hidden = false;
+
+      range.addEventListener("input", () => {
+        const v = Number(range.value);
+        out.textContent = v;
+        renderGauge(gaugeEl, v);
+
+        // met à jour l'URL (pratique pour partager)
+        const params = new URLSearchParams(location.search);
+        params.set(key, String(v));
+        history.replaceState({}, "", `${location.pathname}?${params.toString()}`);
+      });
+    });
+  </script>
+</body>
+</html>
