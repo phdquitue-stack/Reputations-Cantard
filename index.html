@@ -6,86 +6,141 @@
   <title>Réputations des Factions</title>
   <style>
     :root{
-      --bg:#0b1220;
-      --card:#111a2e;
-      --text:#e8eefc;
-      --muted:#9fb0d0;
-      --track:#223256;
-      --tick:#38507f;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      /* Fantasy palette */
+      --bg0:#070a10;
+      --bg1:#0b1220;
+      --ink:#f3eddc;
+      --text:#efe7d2;
+      --muted:#c8bb97;
+
+      --cardA:#0f1218;
+      --cardB:#0b0e14;
+
+      --gold:#d6b46a;
+      --gold2:#f1d79a;
+      --bronze:#a9743a;
+
+      --track:#1a2236;
+      --tick:#5d6b86;
+      --shadow: 0 18px 40px rgba(0,0,0,.55);
+
+      --r: 22px;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1200px 600px at 20% 0%, #14224a 0%, var(--bg) 60%);
       color:var(--text);
       padding:32px;
+
+      /* “Night + parchment glow” background */
+      background:
+        radial-gradient(900px 500px at 15% 0%, rgba(214,180,106,.12) 0%, rgba(11,18,32,0) 60%),
+        radial-gradient(700px 420px at 85% 20%, rgba(110,231,255,.08) 0%, rgba(11,18,32,0) 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(152,92,255,.10) 0%, rgba(11,18,32,0) 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      min-height:100vh;
     }
-    h1{margin:0 0 20px;font-size:24px}
+
+    /* Header */
+    h1{
+      margin:0 0 18px;
+      font-size:28px;
+      letter-spacing:.6px;
+      font-weight:900;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-shadow: 0 2px 0 rgba(0,0,0,.6);
+      position:relative;
+      display:inline-block;
+      padding-bottom:10px;
+    }
+    h1:after{
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:0;
+      height:2px;
+      background: linear-gradient(90deg, transparent, rgba(214,180,106,.9), transparent);
+      filter: drop-shadow(0 6px 10px rgba(214,180,106,.25));
+    }
 
     .grid{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap:16px;
     }
+
+    /* Card: “engraved plate” */
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:18px;
+      position:relative;
+      border-radius: var(--r);
       padding:16px;
       box-shadow: var(--shadow);
+      overflow:hidden;
+
+      background:
+        radial-gradient(120% 140% at 10% 0%, rgba(214,180,106,.14) 0%, rgba(15,18,24,0) 55%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+        linear-gradient(180deg, var(--cardA), var(--cardB));
+
+      border: 1px solid rgba(214,180,106,.22);
     }
+    .card:before{
+      /* subtle “runes” sheen */
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        repeating-linear-gradient(
+          135deg,
+          rgba(214,180,106,.05) 0px,
+          rgba(214,180,106,.05) 6px,
+          rgba(255,255,255,0) 6px,
+          rgba(255,255,255,0) 18px
+        );
+      opacity:.28;
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+    .card:after{
+      /* inner bevel */
+      content:"";
+      position:absolute;
+      inset:10px;
+      border-radius: calc(var(--r) - 10px);
+      border: 1px solid rgba(255,255,255,.06);
+      pointer-events:none;
+    }
+
     .row{display:flex;flex-direction:column;gap:10px}
 
-    .legend .title{font-weight:800;font-size:14px}
-    .legend .subtitle{color:var(--muted);font-size:12px;margin-top:4px}
+    .legend .title{
+      font-weight:900;
+      font-size:14px;
+      letter-spacing:.3px;
+      color: var(--ink);
+    }
+    .legend .subtitle{
+      color: var(--muted);
+      font-size:12px;
+      margin-top:4px;
+    }
 
+    /* Gauge */
     .gauge{
       position:relative;
       width:100%;
-      height:64px;
-      padding-top:16px;
+      height:72px;
+      padding-top:18px;
     }
 
-    .track{
-      position:absolute;
-      left:0; right:0;
-      top:28px;
-      height:12px;
-      background:var(--track);
-      border-radius:999px;
-      overflow:hidden;
-    }
-    .fill{
-      height:100%;
-      width:0%;
-      border-radius:999px;
-      position:relative;
-    }
-
-    .c-red{ background-color:#ff4d6d; }
-    .c-orange{ background-color:#ffb020; }
-    .c-green{ background-color:#28d17c; }
-
-    .bubble{
-      position:absolute;
-      top:0px;
-      transform: translateX(-50%);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.14);
-      white-space:nowrap;
-    }
-
+    /* Ticks */
     .ticks{
       position:absolute;
       left:0; right:0;
       top:10px;
-      height:18px;
+      height:20px;
       pointer-events:none;
     }
     .tick{
@@ -93,18 +148,143 @@
       top:0;
       width:2px;
       height:10px;
-      background: var(--tick);
+      background: rgba(93,107,134,.9);
       transform: translateX(-50%);
+      border-radius:2px;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.35));
     }
     .tick.major{
-      height:14px;
+      height:15px;
+      background: rgba(214,180,106,.7);
     }
     .tick-label{
       position:absolute;
-      top:12px;
+      top:14px;
       transform: translateX(-50%);
       font-size:10px;
-      color:var(--muted);
+      color: rgba(200,187,151,.95);
+      text-shadow: 0 1px 0 rgba(0,0,0,.6);
+    }
+
+    /* Track: “carved channel” */
+    .track{
+      position:absolute;
+      left:0; right:0;
+      top:34px;
+      height:14px;
+      border-radius:999px;
+      overflow:hidden;
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)),
+        radial-gradient(60% 160% at 50% 0%, rgba(214,180,106,.10) 0%, rgba(0,0,0,0) 60%),
+        linear-gradient(180deg, rgba(26,34,54,.95), rgba(14,18,30,.95));
+
+      border: 1px solid rgba(214,180,106,.18);
+      box-shadow:
+        inset 0 2px 6px rgba(0,0,0,.65),
+        0 8px 18px rgba(0,0,0,.35);
+    }
+
+    /* Fill: “enchanted liquid” */
+    .fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      position:relative;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.12),
+        0 6px 18px rgba(0,0,0,.25);
+      transition: width 900ms cubic-bezier(.2,.9,.2,1);
+    }
+    .fill::before{
+      /* shimmering band */
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(120px 40px at 25% 50%, rgba(255,255,255,.28), rgba(255,255,255,0) 70%),
+        linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,0) 55%);
+      opacity:.8;
+      mix-blend-mode: screen;
+    }
+    .fill::after{
+      /* moving sparkle */
+      content:"";
+      position:absolute;
+      top:-30px;
+      left:-40px;
+      width:90px;
+      height:90px;
+      background: radial-gradient(circle, rgba(255,255,255,.35), rgba(255,255,255,0) 65%);
+      opacity:.35;
+      filter: blur(1px);
+      animation: floatSpark 3.6s ease-in-out infinite;
+    }
+    @keyframes floatSpark{
+      0%{ transform: translateX(0) translateY(0); }
+      50%{ transform: translateX(70px) translateY(8px); }
+      100%{ transform: translateX(0) translateY(0); }
+    }
+
+    /* Value bubble: “wax seal” */
+    .bubble{
+      position:absolute;
+      top:0px;
+      transform: translateX(-50%);
+      padding:7px 11px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:950;
+      letter-spacing:.2px;
+      color: var(--ink);
+
+      background:
+        radial-gradient(80% 120% at 30% 20%, rgba(241,215,154,.35) 0%, rgba(214,180,106,.08) 45%, rgba(0,0,0,0) 70%),
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0)),
+        rgba(14,18,30,.78);
+
+      border:1px solid rgba(214,180,106,.35);
+      box-shadow: 0 10px 22px rgba(0,0,0,.4);
+      white-space:nowrap;
+      backdrop-filter: blur(6px);
+    }
+    .bubble::after{
+      /* tiny pointer */
+      content:"";
+      position:absolute;
+      left:50%;
+      bottom:-6px;
+      width:10px;
+      height:10px;
+      transform: translateX(-50%) rotate(45deg);
+      background: rgba(14,18,30,.78);
+      border-right:1px solid rgba(214,180,106,.35);
+      border-bottom:1px solid rgba(214,180,106,.35);
+    }
+
+    /* Color classes */
+    .c-red{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0)),
+        linear-gradient(90deg, #ff3b5f, #c31741);
+      filter: drop-shadow(0 0 18px rgba(255,59,95,.20));
+    }
+    .c-orange{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0)),
+        linear-gradient(90deg, #ffcc54, #ff8a1f);
+      filter: drop-shadow(0 0 18px rgba(255,204,84,.18));
+    }
+    .c-green{
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0)),
+        linear-gradient(90deg, #3bf3a6, #1aa76c);
+      filter: drop-shadow(0 0 18px rgba(59,243,166,.16));
+    }
+
+    @media (max-width:420px){
+      body{padding:18px}
     }
   </style>
 </head>
@@ -212,6 +392,7 @@
 
   function renderGauge(gaugeEl, value){
     value = clamp(Math.round(value), 0, 100);
+
     gaugeEl.innerHTML = "";
     buildTicks(gaugeEl);
 
@@ -220,7 +401,12 @@
 
     const fill = document.createElement("div");
     fill.className = "fill " + colorClassForValue(value);
-    fill.style.width = value + "%";
+
+    // Animation: on démarre à 0 puis on “incante” jusqu’à la valeur
+    fill.style.width = "0%";
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { fill.style.width = value + "%"; });
+    });
 
     const bubble = document.createElement("div");
     bubble.className = "bubble";
@@ -232,13 +418,13 @@
     gaugeEl.appendChild(track);
   }
 
-  const defaults = { 
-    a: 20, 
-    b: 49, 
-    c: 00, 
-    d: 00, 
-    e: 10, 
-    f: 10 
+  const defaults = {
+    a: 20,
+    b: 49,
+    c: 0,
+    d: 0,
+    e: 10,
+    f: 10
   };
 
   document.querySelectorAll(".gauge").forEach(g => {
