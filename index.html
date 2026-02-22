@@ -17,8 +17,6 @@
       --cardB:#0b0e14;
 
       --gold:#d6b46a;
-      --gold2:#f1d79a;
-      --bronze:#a9743a;
 
       --track:#1a2236;
       --tick:#5d6b86;
@@ -34,7 +32,6 @@
       color:var(--text);
       padding:32px;
 
-      /* “Night + parchment glow” background */
       background:
         radial-gradient(900px 500px at 15% 0%, rgba(214,180,106,.12) 0%, rgba(11,18,32,0) 60%),
         radial-gradient(700px 420px at 85% 20%, rgba(110,231,255,.08) 0%, rgba(11,18,32,0) 55%),
@@ -43,7 +40,6 @@
       min-height:100vh;
     }
 
-    /* Header */
     h1{
       margin:0 0 18px;
       font-size:28px;
@@ -71,7 +67,6 @@
       gap:16px;
     }
 
-    /* Card: “engraved plate” */
     .card{
       position:relative;
       border-radius: var(--r);
@@ -83,11 +78,9 @@
         radial-gradient(120% 140% at 10% 0%, rgba(214,180,106,.14) 0%, rgba(15,18,24,0) 55%),
         linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
         linear-gradient(180deg, var(--cardA), var(--cardB));
-
       border: 1px solid rgba(214,180,106,.22);
     }
     .card:before{
-      /* subtle “runes” sheen */
       content:"";
       position:absolute;
       inset:-2px;
@@ -104,7 +97,6 @@
       mix-blend-mode: overlay;
     }
     .card:after{
-      /* inner bevel */
       content:"";
       position:absolute;
       inset:10px;
@@ -125,17 +117,41 @@
       color: var(--muted);
       font-size:12px;
       margin-top:4px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
     }
 
-    /* Gauge */
+    /* small badge for status */
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:3px 8px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:11px;
+      letter-spacing:.25px;
+      color: var(--ink);
+      border:1px solid rgba(214,180,106,.28);
+      background: rgba(14,18,30,.55);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: rgba(214,180,106,.8);
+      box-shadow: 0 0 14px rgba(214,180,106,.35);
+    }
+
     .gauge{
       position:relative;
       width:100%;
-      height:72px;
+      height:78px;
       padding-top:18px;
     }
 
-    /* Ticks */
     .ticks{
       position:absolute;
       left:0; right:0;
@@ -166,39 +182,60 @@
       text-shadow: 0 1px 0 rgba(0,0,0,.6);
     }
 
-    /* Track: “carved channel” */
     .track{
       position:absolute;
       left:0; right:0;
-      top:34px;
+      top:38px;
       height:14px;
       border-radius:999px;
       overflow:hidden;
-
       background:
         linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)),
         radial-gradient(60% 160% at 50% 0%, rgba(214,180,106,.10) 0%, rgba(0,0,0,0) 60%),
         linear-gradient(180deg, rgba(26,34,54,.95), rgba(14,18,30,.95));
-
       border: 1px solid rgba(214,180,106,.18);
       box-shadow:
         inset 0 2px 6px rgba(0,0,0,.65),
         0 8px 18px rgba(0,0,0,.35);
     }
 
-    /* Fill: “enchanted liquid” */
-    .fill{
+    .zero{
+      position:absolute;
+      left:50%;
+      top:36px;
+      width:2px;
+      height:18px;
+      transform: translateX(-50%);
+      background: rgba(241,215,154,.85);
+      box-shadow: 0 0 18px rgba(214,180,106,.35);
+      border-radius:2px;
+      pointer-events:none;
+    }
+
+    .fill-left, .fill-right{
+      position:absolute;
+      top:0;
       height:100%;
       width:0%;
       border-radius:999px;
-      position:relative;
+      transition: width 900ms cubic-bezier(.2,.9,.2,1);
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,.12),
         0 6px 18px rgba(0,0,0,.25);
-      transition: width 900ms cubic-bezier(.2,.9,.2,1);
+      overflow:hidden;
     }
-    .fill::before{
-      /* shimmering band */
+    .fill-left{
+      right:50%;
+      border-top-right-radius:0;
+      border-bottom-right-radius:0;
+    }
+    .fill-right{
+      left:50%;
+      border-top-left-radius:0;
+      border-bottom-left-radius:0;
+    }
+
+    .fill-left::before, .fill-right::before{
       content:"";
       position:absolute;
       inset:0;
@@ -208,26 +245,8 @@
       opacity:.8;
       mix-blend-mode: screen;
     }
-    .fill::after{
-      /* moving sparkle */
-      content:"";
-      position:absolute;
-      top:-30px;
-      left:-40px;
-      width:90px;
-      height:90px;
-      background: radial-gradient(circle, rgba(255,255,255,.35), rgba(255,255,255,0) 65%);
-      opacity:.35;
-      filter: blur(1px);
-      animation: floatSpark 3.6s ease-in-out infinite;
-    }
-    @keyframes floatSpark{
-      0%{ transform: translateX(0) translateY(0); }
-      50%{ transform: translateX(70px) translateY(8px); }
-      100%{ transform: translateX(0) translateY(0); }
-    }
 
-    /* Value bubble: “wax seal” */
+    /* Value bubble */
     .bubble{
       position:absolute;
       top:0px;
@@ -238,19 +257,16 @@
       font-weight:950;
       letter-spacing:.2px;
       color: var(--ink);
-
       background:
         radial-gradient(80% 120% at 30% 20%, rgba(241,215,154,.35) 0%, rgba(214,180,106,.08) 45%, rgba(0,0,0,0) 70%),
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0)),
         rgba(14,18,30,.78);
-
       border:1px solid rgba(214,180,106,.35);
       box-shadow: 0 10px 22px rgba(0,0,0,.4);
       white-space:nowrap;
       backdrop-filter: blur(6px);
     }
     .bubble::after{
-      /* tiny pointer */
       content:"";
       position:absolute;
       left:50%;
@@ -261,26 +277,6 @@
       background: rgba(14,18,30,.78);
       border-right:1px solid rgba(214,180,106,.35);
       border-bottom:1px solid rgba(214,180,106,.35);
-    }
-
-    /* Color classes */
-    .c-red{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0)),
-        linear-gradient(90deg, #ff3b5f, #c31741);
-      filter: drop-shadow(0 0 18px rgba(255,59,95,.20));
-    }
-    .c-orange{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,0)),
-        linear-gradient(90deg, #ffcc54, #ff8a1f);
-      filter: drop-shadow(0 0 18px rgba(255,204,84,.18));
-    }
-    .c-green{
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0)),
-        linear-gradient(90deg, #3bf3a6, #1aa76c);
-      filter: drop-shadow(0 0 18px rgba(59,243,166,.16));
     }
 
     @media (max-width:420px){
@@ -294,124 +290,157 @@
 
 <div class="grid">
 
-  <!-- A -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="a" data-title="Adamantine du Ponant"></div>
-      <div class="legend">
-        <div class="title">Adamantine du Ponant</div>
-      </div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="a" data-title="Adamantine du Ponant"></div>
+    <div class="legend">
+      <div class="title">Adamantine du Ponant</div>
+      <div class="subtitle"><span class="badge"><span class="dot"></span><span class="status-text">—</span></span></div>
     </div>
-  </div>
+  </div></div>
 
-  <!-- B -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="b" data-title="Alignement"></div>
-      <div class="legend">
-        <div class="title">Alignement</div>
-        <div class="subtitle">50 = neutre | &lt;50 = mauvais | &gt;50 = bon</div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="b" data-title="Alignement"></div>
+    <div class="legend">
+      <div class="title">Alignement</div>
+      <div class="subtitle">
+        0 = neutre | &lt;0 = mauvais | &gt;0 = bon
+        <span class="badge"><span class="dot"></span><span class="status-text">—</span></span>
       </div>
     </div>
-  </div>
+  </div></div>
 
-  <!-- C -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="c" data-title="Karenta"></div>
-      <div class="legend">
-        <div class="title">Karenta</div>
-      </div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="c" data-title="Karenta"></div>
+    <div class="legend">
+      <div class="title">Karenta</div>
+      <div class="subtitle"><span class="badge"><span class="dot"></span><span class="status-text">—</span></span></div>
     </div>
-  </div>
+  </div></div>
 
-  <!-- D -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="d" data-title="Venageta"></div>
-      <div class="legend">
-        <div class="title">Venageta</div>
-      </div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="d" data-title="Venageta"></div>
+    <div class="legend">
+      <div class="title">Venageta</div>
+      <div class="subtitle"><span class="badge"><span class="dot"></span><span class="status-text">—</span></span></div>
     </div>
-  </div>
+  </div></div>
 
-  <!-- E -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="e" data-title="La Lance de Pyrite"></div>
-      <div class="legend">
-        <div class="title">La Lance de Pyrite</div>
-      </div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="e" data-title="La Lance de Pyrite"></div>
+    <div class="legend">
+      <div class="title">La Lance de Pyrite</div>
+      <div class="subtitle"><span class="badge"><span class="dot"></span><span class="status-text">—</span></span></div>
     </div>
-  </div>
+  </div></div>
 
-  <!-- F -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="f" data-title="Halle des aventuriers"></div>
-      <div class="legend">
-        <div class="title">Halle des aventuriers</div>
-      </div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="f" data-title="Halle des aventuriers"></div>
+    <div class="legend">
+      <div class="title">Halle des aventuriers</div>
+      <div class="subtitle"><span class="badge"><span class="dot"></span><span class="status-text">—</span></span></div>
     </div>
-  </div>
+  </div></div>
 
-  <!-- G -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="g" data-title="Le ver Blanc"></div>
-      <div class="legend">
-        <div class="title">Le ver Blanc</div>
-      </div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="g" data-title="Le ver Blanc"></div>
+    <div class="legend">
+      <div class="title">Le ver Blanc</div>
+      <div class="subtitle"><span class="badge"><span class="dot"></span><span class="status-text">—</span></span></div>
     </div>
-  </div>
+  </div></div>
 
-  <!-- H -->
-  <div class="card">
-    <div class="row">
-      <div class="gauge" data-key="h" data-title="Habile Céladon"></div>
-      <div class="legend">
-        <div class="title">Habile Céladon</div>
-      </div>
+  <div class="card"><div class="row">
+    <div class="gauge" data-key="h" data-title="Habile Céladon"></div>
+    <div class="legend">
+      <div class="title">Habile Céladon</div>
+      <div class="subtitle"><span class="badge"><span class="dot"></span><span class="status-text">—</span></span></div>
     </div>
-  </div>
+  </div></div>
 
 </div>
 
 <script>
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-  function colorClassForValue(v){
-    if (v < 40) return "c-red";
-    if (v < 70) return "c-orange";
-    return "c-green";
+  // Chaque faction a sa “teinte” (HSL) — change les nombres si tu veux
+  const factionHue = {
+    a: 35,   // or
+    b: 200,  // azur
+    c: 120,  // vert forêt
+    d: 280,  // violet
+    e: 18,   // cuivre
+    f: 170,  // jade
+    g: 0,    // sang
+    h: 90    // émeraude clair
+  };
+
+  // Map [-100..100] => [0..100]
+  function posPercent(v){
+    return ((v + 100) / 200) * 100;
+  }
+
+  function statusFor(v){
+    if (v < -20) return "Hostile";
+    if (v <= -1) return "Froid";     // -19..-1
+    if (v <= 20) return "Neutre";    // 0..20
+    if (v <= 40) return "Amical";    // 21..40
+    if (v <= 75) return "Chaleureux";// 41..75
+    return "Allié";                  // 76..100
   }
 
   function buildTicks(container){
     const ticks = document.createElement("div");
     ticks.className = "ticks";
 
-    for(let i=0;i<=20;i++){
-      const value = i*5;
-      const left = value;
+    const major = [
+      { left: 0, label: "-100" },
+      { left: 50, label: "0" },
+      { left: 100, label: "+100" }
+    ];
 
+    const minorVals = [-75,-50,-25,25,50,75];
+    for (const v of minorVals){
       const t = document.createElement("div");
-      t.className = "tick" + (value % 25 === 0 ? " major" : "");
-      t.style.left = left + "%";
+      t.className = "tick";
+      t.style.left = posPercent(v) + "%";
+      ticks.appendChild(t);
+    }
+
+    for (const m of major){
+      const t = document.createElement("div");
+      t.className = "tick major";
+      t.style.left = m.left + "%";
       ticks.appendChild(t);
 
-      if (value === 0 || value === 50 || value === 100){
-        const lab = document.createElement("div");
-        lab.className = "tick-label";
-        lab.style.left = left + "%";
-        lab.textContent = value;
-        ticks.appendChild(lab);
-      }
+      const lab = document.createElement("div");
+      lab.className = "tick-label";
+      lab.style.left = m.left + "%";
+      lab.textContent = m.label;
+      ticks.appendChild(lab);
     }
+
     container.appendChild(ticks);
   }
 
+  // Crée une couleur faction + modulation selon valeur (plus clair si allié, plus sombre si hostile)
+  function factionGradient(key, v){
+    const hue = factionHue[key] ?? 35;
+    const abs = Math.min(100, Math.abs(v));
+
+    // hostile -> plus sombre ; allié -> plus lumineux
+    const light = v >= 0 ? (45 + (abs * 0.15)) : (38 - (abs * 0.10));
+    const sat   = 78;
+
+    const c1 = `hsl(${hue} ${sat}% ${clamp(light + 8, 22, 72)}%)`;
+    const c2 = `hsl(${hue} ${sat}% ${clamp(light - 6, 18, 62)}%)`;
+
+    return `linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0)),
+            linear-gradient(90deg, ${c1}, ${c2})`;
+  }
+
   function renderGauge(gaugeEl, value){
-    value = clamp(Math.round(value), 0, 100);
+    const v = clamp(Math.round(value), -100, 100);
+    const key = gaugeEl.dataset.key;
 
     gaugeEl.innerHTML = "";
     buildTicks(gaugeEl);
@@ -419,34 +448,75 @@
     const track = document.createElement("div");
     track.className = "track";
 
-    const fill = document.createElement("div");
-    fill.className = "fill " + colorClassForValue(value);
+    const zero = document.createElement("div");
+    zero.className = "zero";
 
-    // Animation: on démarre à 0 puis on “incante” jusqu’à la valeur
-    fill.style.width = "0%";
+    const left = document.createElement("div");
+    left.className = "fill-left";
+
+    const right = document.createElement("div");
+    right.className = "fill-right";
+
+    // Appliquer couleurs “faction”
+    left.style.background = factionGradient(key, v);
+    right.style.background = factionGradient(key, v);
+
+    // Démarrer à 0 puis animer
+    left.style.width = "0%";
+    right.style.width = "0%";
+
+    const abs = Math.abs(v);
+    const w = (abs / 100) * 50;
+
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => { fill.style.width = value + "%"; });
+      requestAnimationFrame(() => {
+        if (v < 0) left.style.width = w + "%";
+        if (v > 0) right.style.width = w + "%";
+      });
     });
 
     const bubble = document.createElement("div");
     bubble.className = "bubble";
-    bubble.style.left = value + "%";
-    bubble.textContent = value + " / 100";
+    bubble.style.left = posPercent(v) + "%";
+    bubble.textContent = (v > 0 ? "+" : "") + v + " / 100";
 
-    track.appendChild(fill);
+    // Petit accent faction sur la bulle (bordure)
+    const hue = factionHue[key] ?? 35;
+    bubble.style.borderColor = `hsla(${hue}, 70%, 60%, .45)`;
+
+    track.appendChild(left);
+    track.appendChild(right);
+
     gaugeEl.appendChild(bubble);
     gaugeEl.appendChild(track);
+    gaugeEl.appendChild(zero);
+
+    // Mise à jour du statut dans la légende correspondante
+    const card = gaugeEl.closest(".card");
+    const statusText = card?.querySelector(".status-text");
+    const dot = card?.querySelector(".dot");
+    if (statusText) statusText.textContent = statusFor(v);
+    if (dot) {
+      dot.style.background = `hsl(${hue} 80% 60%)`;
+      dot.style.boxShadow = `0 0 14px hsla(${hue}, 80%, 60%, .35)`;
+    }
+
+    // a11y
+    const title = gaugeEl.dataset.title || "Jauge";
+    gaugeEl.setAttribute("role", "img");
+    gaugeEl.setAttribute("aria-label", `${title} : ${(v>0?"+":"")}${v} (de -100 à +100), statut ${statusFor(v)}`);
   }
 
+  // Valeurs par défaut (à modifier par toi)
   const defaults = {
     a: 20,
-    b: 49,
+    b: -1,
     c: 0,
     d: 0,
     e: 10,
     f: 10,
-    g: 0,
-    h: 0
+    g: -50,
+    h: 35
   };
 
   document.querySelectorAll(".gauge").forEach(g => {
